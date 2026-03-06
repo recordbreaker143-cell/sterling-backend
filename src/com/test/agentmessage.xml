@@ -1,0 +1,4 @@
+<MessageXml Action="Get" DocumentParamsKey="0001" DocumentType="0001"
+    NumRecordsToBuffer="2" ProcessType="ORDER_FULFILLMENT"
+    ProcessTypeKey="ORDER_FULFILLMENT" RetentionDays="1"
+    TransactionId="purgeDelIn.0001.ex" TransactionKey="2026011619034952258"/>
