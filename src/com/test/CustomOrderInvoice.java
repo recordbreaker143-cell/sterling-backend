@@ -27,7 +27,7 @@ public class CustomOrderInvoice {
 		 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
 		 String formatted = unqVal.format(formatter);
 		 log.info("Entering the customOrderInvoice...");
-		 System.out.println("Entering customOrdeinvoice");
+		 System.out.println("Entering customOrdeinvoice service now");
 		 YFCDocument yfcDoc = YFCDocument.getDocumentFor(inputDoc);
 		 YFCElement rootEl = yfcDoc.getDocumentElement();
 		log.debug("RootElement is extracted..."+rootEl);
