@@ -51,7 +51,7 @@ public class CustomOrderInvoice {
 			//String InvoiceNo=(String) (rootEl.getAttribute("OrderNo")+'-'+ol.getAttribute("PrimeLineNo"));
 			String InvoiceNo = rootEl.getAttribute("OrderNo") + "-" + ol.getAttribute("PrimeLineNo");
 			YFCElement newRootEl=newDoc.getDocumentElement();
-			newRootEl.setAttribute("InvoiceNo", InvoiceNo);
+			newRootEl.setAttribute("ExtnInvoiceNo", InvoiceNo);
 			String InvoiceKey=formatted+ol.getAttribute("PrimeLineNo");
 			log.debug("Invoice Key is generated with ID"+InvoiceKey);
 			log.debug("Invoice Key is generated with ID"+InvoiceNo);
@@ -67,7 +67,6 @@ public class CustomOrderInvoice {
 			    log.error("Error invoking InvoiceServices for InvoiceKey=" + InvoiceKey, e);
 			    throw e; // rethrow so OMS knows it failed
 			}
-
 		}
 		return inputDoc;
 		
