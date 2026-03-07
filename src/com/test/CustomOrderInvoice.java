@@ -1,13 +1,18 @@
 package com.test;
 
-import java.rmi.RemoteException;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.xml.sax.SAXException;
 
 import com.yantra.interop.japi.YIFApi;
 import com.yantra.interop.japi.YIFClientCreationException;
@@ -22,19 +27,24 @@ import com.yantra.yfs.japi.YFSException;
 public class CustomOrderInvoice {
 	private static final Logger log=Logger.getLogger(CustomOrderInvoice.class.getName());
 	protected static YIFApi api=null;
-	public Document customOrderInvoice(YFSEnvironment env,Document inputDoc) throws YFSException, RemoteException, YIFClientCreationException {
+	public Document customOrderInvoice(YFSEnvironment env,Document inputDoc) throws YFSException, YIFClientCreationException, ParserConfigurationException, SAXException, IOException {
+//		DocumentBuilder db=DocumentBuilderFactory.newInstance().newDocumentBuilder();
+//		Document inputDoc=db.parse("C:\\Users\\Munideep\\Documents\\workspace-spring-tools-for-eclipse-4.32.2.RELEASE\\SterlingJavaCodes\\src\\com\\test\\createOrderSuccess.xml");
 		LocalDateTime unqVal=LocalDateTime.now();
 		 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
 		 String formatted = unqVal.format(formatter);
 		 log.info("Entering the customOrderInvoice...");
-		 System.out.println("Entering customOrdeinvoice service now");
-		 YFCDocument yfcDoc = YFCDocument.getDocumentFor(inputDoc);
+		// System.out.println("Entering customOrdeinvoice service now");
+		YFCDocument yfcDoc = YFCDocument.getDocumentFor(inputDoc);
 		 YFCElement rootEl = yfcDoc.getDocumentElement();
-		log.debug("RootElement is extracted..."+rootEl);
-		YFCIterableIterator<YFCElement> orderline=(YFCIterableIterator<YFCElement>) rootEl.getChildren("OrderLines");
+		 YFCElement ols=rootEl.getChildElement("OrderLines");
+		// log.debug("RootElement is extracted..."+rootEl);
+		YFCIterableIterator<YFCElement> orderline=(YFCIterableIterator<YFCElement>) ols.getChildren("OrderLine");
+		System.out.println(orderline.toString());
 		while(orderline.hasNext()) {
 			YFCElement ol=orderline.next();
 			log.info("Creating a new Document for the Custom Invoices...");
+			System.out.println(ol.toString());
 			System.out.println("Creating a new Document for the Custom Invoices...");
 			YFCDocument newDoc=YFCDocument.createDocument("ExtnInvoices");
 			log.debug("Document is created"+newDoc);
@@ -44,11 +54,13 @@ public class CustomOrderInvoice {
 			newRootEl.setAttribute("InvoiceNo", InvoiceNo);
 			String InvoiceKey=formatted+ol.getAttribute("PrimeLineNo");
 			log.debug("Invoice Key is generated with ID"+InvoiceKey);
+			log.debug("Invoice Key is generated with ID"+InvoiceNo);
+			log.debug(ol.getAttribute("OrderLineKey"));
 			newRootEl.setAttribute("ExtnInvoiceKey", InvoiceKey);
 			newRootEl.setAttribute("ExtnOrderLineKey", ol.getAttribute("OrderLineKey"));
 			log.info("Document is created for the custom service invocation...");
 			try {
-			    getApi().executeFlow(env, "InvoiceServics", newDoc.getDocument());
+			    getApi().executeFlow(env, "CreateInvoiceService", newDoc.getDocument());
 			    System.out.println("Api Invoked successfully");
 			    log.info("API invoked successfully for InvoiceKey=" + InvoiceKey);
 			} catch (Exception e) {
@@ -66,4 +78,8 @@ public class CustomOrderInvoice {
 		}
 		return api;
 	}
+//	public static void main(String[] args) throws YFSException, YIFClientCreationException, ParserConfigurationException, SAXException, IOException {
+//		CustomOrderInvoice c=new CustomOrderInvoice();
+//		c.customOrderInvoice(null);
+//	}
 }
