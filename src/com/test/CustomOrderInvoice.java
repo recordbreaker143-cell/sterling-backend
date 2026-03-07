@@ -25,14 +25,14 @@ import com.yantra.yfs.japi.YFSEnvironment;
 import com.yantra.yfs.japi.YFSException;
 
 public class CustomOrderInvoice {
-	private static final Logger log=Logger.getLogger(CustomOrderInvoice.class.getName());
+	private static final Logger log=Logger.getLogger(CustomOrderInvoice.class);
 	protected static YIFApi api=null;
 	public Document customOrderInvoice(YFSEnvironment env,Document inputDoc) throws YFSException, YIFClientCreationException, ParserConfigurationException, SAXException, IOException {
 //		DocumentBuilder db=DocumentBuilderFactory.newInstance().newDocumentBuilder();
 //		Document inputDoc=db.parse("C:\\Users\\Munideep\\Documents\\workspace-spring-tools-for-eclipse-4.32.2.RELEASE\\SterlingJavaCodes\\src\\com\\test\\createOrderSuccess.xml");
-		LocalDateTime unqVal=LocalDateTime.now();
-		 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
-		 String formatted = unqVal.format(formatter);
+//		LocalDateTime unqVal=LocalDateTime.now();
+//		 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+//		 String formatted = unqVal.format(formatter);
 		 log.info("Entering the customOrderInvoice...");
 		// System.out.println("Entering customOrdeinvoice service now");
 		YFCDocument yfcDoc = YFCDocument.getDocumentFor(inputDoc);
@@ -52,7 +52,7 @@ public class CustomOrderInvoice {
 			String InvoiceNo = rootEl.getAttribute("OrderNo") + "-" + ol.getAttribute("PrimeLineNo");
 			YFCElement newRootEl=newDoc.getDocumentElement();
 			newRootEl.setAttribute("ExtnInvoiceNo", InvoiceNo);
-			String InvoiceKey=formatted+ol.getAttribute("PrimeLineNo");
+			String InvoiceKey = String.valueOf(System.currentTimeMillis());
 			log.debug("Invoice Key is generated with ID"+InvoiceKey);
 			log.debug("Invoice Key is generated with ID"+InvoiceNo);
 			log.debug(ol.getAttribute("OrderLineKey"));
@@ -60,9 +60,16 @@ public class CustomOrderInvoice {
 			newRootEl.setAttribute("ExtnOrderLineKey", ol.getAttribute("OrderLineKey"));
 			log.info("Document is created for the custom service invocation...");
 			try {
+				YFCDocument output=YFCDocument.createDocument("ExtnInvoices");
+				YFCElement outputRootEl=output.getDocumentElement();
+				outputRootEl.setAttribute("ExtnOrderLineKey",ol.getAttribute("OrderLineKey"));
+				Document outputDoc=getApi().executeFlow(env, "getInvoiceDetails", output.getDocument());
+				YFCElement outRoot = YFCDocument.getDocumentFor(outputDoc).getDocumentElement();
+				if(!outRoot.hasChildNodes()) {
 			    getApi().executeFlow(env, "CreateInvoiceService", newDoc.getDocument());
 			    System.out.println("Api Invoked successfully");
 			    log.info("API invoked successfully for InvoiceKey=" + InvoiceKey);
+				}
 			} catch (Exception e) {
 			    log.error("Error invoking InvoiceServices for InvoiceKey=" + InvoiceKey, e);
 			    throw e; // rethrow so OMS knows it failed
