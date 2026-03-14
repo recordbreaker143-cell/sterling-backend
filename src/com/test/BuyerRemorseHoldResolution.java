@@ -29,7 +29,7 @@ import com.yantra.yfs.japi.YFSUserExitException;
 import com.yantra.yfs.japi.ue.YFSProcessOrderHoldTypeUE;
 
 public class BuyerRemorseHoldResolution implements YFSProcessOrderHoldTypeUE {
-	private static final Logger log =Logger.getLogger("systemlogger");
+	private static final Logger log =Logger.getLogger("system");
 	@Override
 	public Document processOrderHoldType(YFSEnvironment env, Document InputDoc) throws YFSUserExitException {
 		try {
