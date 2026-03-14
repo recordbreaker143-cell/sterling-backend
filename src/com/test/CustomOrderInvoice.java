@@ -25,7 +25,7 @@ import com.yantra.yfs.japi.YFSEnvironment;
 import com.yantra.yfs.japi.YFSException;
 
 public class CustomOrderInvoice {
-	private static final Logger log=Logger.getLogger(CustomOrderInvoice.class);
+	private static final Logger log=Logger.getLogger("system");
 	protected static YIFApi api=null;
 	public Document customOrderInvoice(YFSEnvironment env,Document inputDoc) throws YFSException, YIFClientCreationException, ParserConfigurationException, SAXException, IOException {
 //		DocumentBuilder db=DocumentBuilderFactory.newInstance().newDocumentBuilder();
